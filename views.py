@@ -1,4 +1,5 @@
 import pygame
+import traceback
 from pygame import Rect
 
 pygame.font.init()
@@ -27,7 +28,10 @@ class View(object):
     def render_internal(self, surface):
         if self.background_color is not None:
             surface.fill(self.background_color)
-        self.render(surface)
+        try:
+            self.render(surface)
+        except:
+            traceback.print_exc()
         for (r, v) in self.subviews:
             v.render_internal(surface.subsurface(r))
 
@@ -36,7 +40,11 @@ class View(object):
             if(r.collidepoint(x,y)):
                 if v.onTouch_internal(x-r.x, y-r.y):
                     return True
-        return self.onTouch(x, y)
+        try:
+            return self.onTouch(x, y)
+        except:
+            traceback.print_exc()
+        return False
 
     def addView(self, rect, view):
         self.subviews.append((rect, view))

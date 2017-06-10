@@ -1,4 +1,5 @@
 import pygame
+import traceback
 
 class DisplayManager(object):
     def __init__(self, surface, root_window):
@@ -8,14 +9,26 @@ class DisplayManager(object):
 
     def finish(self):
         if len(self.window_stack) > 1:
-            self.window_stack[-1].setInactive()
+            try:
+                self.window_stack[-1].setInactive()
+            except:
+                traceback.print_exc()
             self.window_stack.pop()
-            self.window_stack[-1].setActive(self.surface, self)
+            try:
+                self.window_stack[-1].setActive(self.surface, self)
+            except:
+                traceback.print_exc()
 
     def launch(self, window):
-        self.window_stack[-1].setInactive()
+        try:
+            self.window_stack[-1].setInactive()
+        except:
+            traceback.print_exc()
         self.window_stack.append(window)
-        self.window_stack[-1].setActive(self.surface, self)
+        try:
+            self.window_stack[-1].setActive(self.surface, self)
+        except:
+            traceback.print_exc()
 
     def activity_loop(self):
         while True:
@@ -24,3 +37,4 @@ class DisplayManager(object):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     (x,y) = pygame.mouse.get_pos()
                     self.window_stack[-1].onTouch_internal(x,y)
+

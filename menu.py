@@ -1,6 +1,8 @@
 import pygame
 from pygame import Rect
 from views import View, Window, TextView, Button
+from status import StatusPage
+from wifisetup import PasswordWindow
 
 black = (0, 0, 0)
 white = (255, 255, 255)
@@ -12,11 +14,11 @@ class Menu(Window):
         self.launch(StatusPage())
 
     def launchWifiSetup(self):
-        self.launch(StatusPage())
+        self.launch(PasswordWindow())
 
     def __init__(self):
         super(Menu, self).__init__()
-        self.tv = TextView("Test String")
+        self.tv = TextView("Menu")
         self.status = Button("System Status", on_click=self.launchStatus)
         self.wifi_setup = Button("Wifi Setup", on_click=self.launchWifiSetup)
         self.addView(Rect(10,0,320,40), self.tv)

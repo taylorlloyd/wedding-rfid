@@ -9,6 +9,7 @@ class View(object):
     def __init__(self, background_color=None, foreground_color=(0,0,0)):
         self.parent = None
         self.subviews = []
+        self.delay_render = False
         self.background_color = background_color
         self.foreground_color = foreground_color
 
@@ -21,8 +22,13 @@ class View(object):
     def onParentAdded(self):
         pass
 
+    def delayRender(self, delay):
+        self.delay_render = delay
+        if not delay:
+            self.rerender()
+
     def rerender(self):
-        if self.parent is not None:
+        if not self.delay_render and self.parent is not None:
            self.parent.rerender()
 
     def render_internal(self, surface):

@@ -8,9 +8,9 @@ text_font = pygame.font.SysFont("dejavusans", 32)
 
 class Loading(Window):
     
-    def __init__(self):
+    def __init__(self, text_to_display):
         super(Loading, self).__init__()
-        self.loading = TextView("Loading, Please wait!", font=text_font)
+        self.loading = TextView(text_to_display, font=text_font)
         self.addView(Rect(0,140,320,200), self.loading)
     
     def __str__(self):

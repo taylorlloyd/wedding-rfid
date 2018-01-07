@@ -5,6 +5,8 @@ from pygame import Rect
 
 pygame.font.init()
 default_font = pygame.font.SysFont("ubuntu", 24)
+progress_grey = (153,151,152)
+progress_green = (17,132,69)
 
 class View(object):
     def __init__(self, background_color=None, foreground_color=(0,0,0)):
@@ -61,6 +63,16 @@ class View(object):
     def __str__(self):
         return "<View (" + str(len(self.subviews)) + " children)>"
 
+
+class ProgressView(View):
+    def __init__(self, percent_done=0):
+        super(ProgressView, self).__init__(background_color=progress_grey)
+        self.percent_done = percent_done
+        
+    def render(self, surface):
+        (s_width, s_height) = surface.get_size()
+        pygame.draw.rect(surface,progress_green,(0, s_height / 4, s_width * self.percent_done, s_height / 1.5))   
+        
 class Window(View):
     def __init__(self, background_color=(255,255,255)):
         super(Window, self).__init__(background_color=background_color)
@@ -82,7 +94,8 @@ class Window(View):
             pygame.display.flip()
 
     def finish(self):
-        self.manager.finish()
+        if self.manager:
+            self.manager.finish()
 
     def launch(self, window):
         self.manager.launch(window)
@@ -110,7 +123,7 @@ class TextView(View):
         if t_width > s_width:
         
             words = self.text.split(' ')
-            lines = math.ceil(float(t_width) / (float(s_width) * 1.0))
+            lines = math.ceil(float(t_width) / (float(s_width) * 0.9))
             words_per_line = max(1, int(len(words) / lines))
             word_lines = [words[i:i+words_per_line] for i in range(0, len(words), words_per_line)]
             #print word_lines

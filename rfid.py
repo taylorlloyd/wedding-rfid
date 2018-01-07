@@ -15,8 +15,9 @@ def rfid_loop():
         for event in dev.read():
             if event.type==1 and event.value==1:
                 if event.code == 28:
-                    for cb in tagCallbacks:
-                        cb(tag)
+                    if len(tag) > 8:
+                        for cb in tagCallbacks:
+                            cb(tag)
                     tag = ""
                 else:
                     tag = tag + keys[event.code]

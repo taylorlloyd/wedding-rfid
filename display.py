@@ -19,6 +19,18 @@ class DisplayManager(object):
             except:
                 traceback.print_exc()
 
+    def launch_consume(self, window):
+        try:
+            self.window_stack[-1].setInactive()
+        except:
+            traceback.print_exc()
+        self.window_stack.pop()
+        self.window_stack.append(window)
+        try:
+            self.window_stack[-1].setActive(self.surface, self)
+        except:
+            traceback.print_exc()
+                
     def launch(self, window):
         try:
             self.window_stack[-1].setInactive()

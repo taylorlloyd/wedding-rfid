@@ -21,9 +21,9 @@ class Menu(Window):
         self.tv = TextView("Menu")
         self.status = Button("System Status", on_click=self.launchStatus)
         self.wifi_setup = Button("Wifi Setup", on_click=self.launchWifiSetup)
-        self.addView(Rect(10,0,320,40), self.tv)
-        self.addView(Rect(10,50,320,40), self.status)
-        self.addView(Rect(10,100,320,40), self.wifi_setup)
+        self.addView(Rect(60,0,200,40), self.tv)
+        self.addView(Rect(60,100,200,40), self.status)
+        self.addView(Rect(60,200,200,40), self.wifi_setup)
 
     def onTouch(self, x, y):
         print("Touch at " + str(x)+ ", "+str(y))

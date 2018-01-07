@@ -1,5 +1,6 @@
 import pygame
 import traceback
+import math
 from pygame import Rect
 
 pygame.font.init()
@@ -61,8 +62,8 @@ class View(object):
         return "<View (" + str(len(self.subviews)) + " children)>"
 
 class Window(View):
-    def __init__(self):
-        super(Window, self).__init__(background_color=(255,255,255))
+    def __init__(self, background_color=(255,255,255)):
+        super(Window, self).__init__(background_color=background_color)
         self.surface = None
         self.manager = None
 
@@ -102,13 +103,27 @@ class TextView(View):
         self.rerender()
 
     def render(self, surface):
-        txt_surf = self.font.render(self.text, 1, self.foreground_color)
+        
         # Center the text
-        (t_width, t_height) = txt_surf.get_size()
+        (t_width, t_height) = self.font.size(self.text)
         (s_width, s_height) = surface.get_size()
-        x_off = (s_width-t_width)/2
-        y_off = (s_height-t_height)/2
-        surface.blit(txt_surf, (x_off, y_off) )
+        if t_width > s_width:
+        
+            words = self.text.split(' ')
+            lines = math.ceil(float(t_width) / (float(s_width) * 1.0))
+            words_per_line = max(1, int(len(words) / lines))
+            word_lines = [words[i:i+words_per_line] for i in range(0, len(words), words_per_line)]
+            #print word_lines
+            word_lines = [' '.join(l) for l in word_lines]
+        else:
+            word_lines=[self.text]
+
+
+        for idx,line in enumerate(word_lines):
+            txt_surf = self.font.render(line, 1, self.foreground_color)   
+            x_off = (s_width-txt_surf.get_size()[0])/2
+            y_off = (s_height-(t_height*len(word_lines)))/2+(idx*t_height)
+            surface.blit(txt_surf, (x_off, y_off) )
 
     def __str__(self):
         return "<TextView \"" + self.text + "\">"

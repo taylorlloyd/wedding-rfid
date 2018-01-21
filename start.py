@@ -29,22 +29,22 @@ MODE = 'activator'
 if len(sys.argv) > 1:
     argument = sys.argv[1]
     if argument == 'activator' or argument == 'master' or argument == 'slave' or argument == 'test':
-        MODE = argument    
+        MODE = argument
     else:
         raise Exception("Unknown argument to the program")
     if argument == 'slave':
         if len(sys.argv) < 2:
             raise Exception("Slave requires master IP")
         masterip = sys.argv[2]
-    
-print "Starting in mode: " + MODE    
+
+print "Starting in mode: " + MODE
 load_window = Loading("Loading, Please wait!")
 connect_window = Loading("Connecting, Please wait!")
 wait_window = Waiting()# if MODE == 'slave' else Waiting(10)
 
 def print_tag_callback(tag):
     print "Tag: %s" % tag
-    
+
 #
 def activate_tag_callback(tag):
     if display_manager.active_window() != prompt:
@@ -62,7 +62,7 @@ def activate_tag_callback(tag):
         rule = res_dict["player"]["rule_text"]
         activation = Activation(name, team, rule)
         display_manager.launch_consume(activation)
-        
+
 #
 def master_tag_callback(tag):
     if display_manager.active_window() != prompt:
@@ -91,15 +91,15 @@ def master_tag_callback(tag):
             print "Last item in pipeline is not stale"
         else:
             print "Last item in pipeline is stale"
-    
+
     if len(partner_tag) > 10:
         print "Stale tags found!"
         partner_tag = partner_tag[len(partner_tag)-10:]
     partner_time = partner_payload['time']
     print "Partner tag:"
     print partner_tag
-    
-    
+
+
     # 2. Send http request to server
     res = urllib2.urlopen("http://192.168.1.10:8000/api/interact?player1=%s&player2=%s" % (tag, partner_tag)).read()
     # 3. Send result to the slave
@@ -109,7 +109,10 @@ def master_tag_callback(tag):
     print res
     res_dict = json.loads(res)
     if (res_dict["status"] == "error"):
-        wait_window.finish()
+        flipErrorResult = FlipResult(res_dict["msg"],1.0)
+        display_manager.launch_consume(flipErrorResult)
+        time.sleep(3)
+        flipErrorResult.finish()
     else:
         playerChanged = res_dict["player1_changed"]
         partnerChanged = res_dict["player2_changed"]
@@ -126,7 +129,7 @@ def master_tag_callback(tag):
         display_manager.launch_consume(flipStatus)
         time.sleep(4)
         flipStatus.finish()
-    
+
 
 def slave_tag_callback(tag):
     if display_manager.active_window() != prompt:
@@ -145,7 +148,10 @@ def slave_tag_callback(tag):
     ss.settimeout(None)
     res_dict = json.loads(res)
     if (res_dict["status"] == "error"):
-        wait_window.finish()
+        flipErrorResult = FlipResult(res_dict["msg"],1.0)
+        display_manager.launch_consume(flipErrorResult)
+        time.sleep(3)
+        flipErrorResult.finish()
     else:
         playerChanged = res_dict["player2_changed"]
         partnerChanged = res_dict["player1_changed"]
@@ -162,9 +168,9 @@ def slave_tag_callback(tag):
         display_manager.launch_consume(flipStatus)
         time.sleep(4)
         flipStatus.finish()
-    
+
 HOST='0.0.0.0'
-PORT=2217    
+PORT=2217
 if MODE == 'activator':
     add_rfid_callback(activate_tag_callback)
 elif MODE == 'master':
@@ -190,7 +196,7 @@ elif MODE == 'master':
     slavetime = conn.recv(256)
     drift = float(slavetime) - time.time()
     print "Drift: " + str(drift)
-    
+
 elif MODE == 'slave':
     add_rfid_callback(slave_tag_callback)
     ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -206,10 +212,10 @@ elif MODE == 'slave':
     print "Connected to master at " + masterip
     print "Sending master slave time-stamp"
     ss.send(str(time.time()))
-    
+
 elif MODE == 'test':
     add_rfid_callback(print_tag_callback)
-    
+
 # Create the pygame screen
 pygame.init()
 
@@ -218,7 +224,7 @@ pygame.init()
 disp_no = os.getenv("DISPLAY")
 if disp_no:
     print "I'm running under X display = {0}".format(disp_no)
-    
+
 # Check which frame buffer drivers are available
 # Start with fbcon since directfb hangs with composite output
 drivers = ['fbcon', 'directfb', 'svgalib']
@@ -234,10 +240,10 @@ for driver in drivers:
             continue
         found = True
         break
-    
+
     if not found:
         raise Exception('No suitable video driver found!')
-        
+
 size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
 print "Framebuffer size: %d x %d" % (size[0], size[1])
 (stdin, stdout) = (sys.stdin, sys.stdout)

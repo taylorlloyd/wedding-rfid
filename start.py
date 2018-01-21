@@ -38,10 +38,6 @@ if len(sys.argv) > 1:
         masterip = sys.argv[2]
     
 print "Starting in mode: " + MODE    
-# Start watching for RFID events
-rfid_thread = threading.Thread(target=rfid_keyboard_loop)
-rfid_thread.daemon = True
-rfid_thread.start()
 load_window = Loading("Loading, Please wait!")
 connect_window = Loading("Connecting, Please wait!")
 wait_window = Waiting()# if MODE == 'slave' else Waiting(10)
@@ -261,5 +257,6 @@ display_thread = threading.Thread(target=display_manager.activity_loop)
 display_thread.daemon = True
 display_thread.start()
 
+rfid_keyboard_loop()
 while(True):
     continue

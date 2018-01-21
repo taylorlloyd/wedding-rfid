@@ -6,6 +6,12 @@ tagCallbacks = []
 def add_rfid_callback(cb_fn):
     tagCallbacks.append(cb_fn)
 
+def rfid_keyboard_loop():
+    while True:
+        tag = raw_input()
+        for cb in tagCallbacks:
+            cb(tag)
+
 def rfid_loop():
     keys = "X^1234567890XXXXqwertzuiopXX\nXasdfghjklXXXXXyxcvbnmXXXXXXXXXXXXXXXXXXXXXXX"
     dev = InputDevice('/dev/input/by-id/usb-Sycreader_USB_Reader_08FF20150112-event-kbd')

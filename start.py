@@ -1,4 +1,4 @@
-from rfid import rfid_loop, add_rfid_callback
+from rfid import rfid_loop, rfid_keyboard_loop, add_rfid_callback
 from display import DisplayManager
 import pygame
 import threading
@@ -39,7 +39,7 @@ if len(sys.argv) > 1:
     
 print "Starting in mode: " + MODE    
 # Start watching for RFID events
-rfid_thread = threading.Thread(target=rfid_loop)
+rfid_thread = threading.Thread(target=rfid_keyboard_loop)
 rfid_thread.daemon = True
 rfid_thread.start()
 load_window = Loading("Loading, Please wait!")
@@ -55,7 +55,7 @@ def activate_tag_callback(tag):
         return
     print "Activating tag: %s" % tag
     display_manager.launch(load_window)
-    res = urllib2.urlopen("http://192.168.1.112:8000/api/activate?tag=%s" % tag).read()
+    res = urllib2.urlopen("http://192.168.1.10:8000/api/activate?tag=%s" % tag).read()
     print res
     res_dict = json.loads(res)
     if (res_dict["status"] == "error"):
@@ -105,7 +105,7 @@ def master_tag_callback(tag):
     
     
     # 2. Send http request to server
-    res = urllib2.urlopen("http://192.168.1.112:8000/api/interact?player1=%s&player2=%s" % (tag, partner_tag)).read()
+    res = urllib2.urlopen("http://192.168.1.10:8000/api/interact?player1=%s&player2=%s" % (tag, partner_tag)).read()
     # 3. Send result to the slave
     conn.send(res)
     # 4. Display 3-window result

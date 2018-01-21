@@ -240,7 +240,11 @@ for driver in drivers:
         
 size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
 print "Framebuffer size: %d x %d" % (size[0], size[1])
+(stdin, stdout) = (sys.stdin, sys.stdout)
+(sys.stdin, sys.stdout) = (None, None)
 screen = pygame.display.set_mode(size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+(sys.stdin, sys.stdout) = (stdin, stdout)
+print("Display mode set")
 # Clear the screen to start
 screen.fill((0, 0, 0))
 # Initialise font support
@@ -252,11 +256,12 @@ pygame.mouse.set_visible(0)
 
 prompt = ActivationPrompt() if MODE == 'activator' else FlipperPrompt()
 
+print("Starting display manager")
 display_manager = DisplayManager(screen, prompt)
+rfid_loop()
 display_thread = threading.Thread(target=display_manager.activity_loop)
 display_thread.daemon = True
 display_thread.start()
 
-rfid_keyboard_loop()
 while(True):
     continue

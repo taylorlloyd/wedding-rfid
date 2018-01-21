@@ -83,10 +83,12 @@ class Window(View):
         self.surface = surface
         self.manager = manager
         self.rerender()
+	print(str(self) + " Active")
 
     def setInactive(self):
         self.surface = None
         self.manager = None
+	print(str(self) + " Inactive")
 
     def rerender(self):
         if self.surface is not None:

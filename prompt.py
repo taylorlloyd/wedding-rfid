@@ -21,6 +21,7 @@ class FlipperPrompt(Window):
         super(FlipperPrompt, self).__init__()
         self.prompt = TextView("Please Scan Your Card!", font=text_font)
         self.addView(Rect(0,160,320,120), self.prompt)
+	print("Flipper constructed")
     
     def __str__(self):
         return "<FlipperWindow>"

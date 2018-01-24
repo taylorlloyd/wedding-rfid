@@ -11,6 +11,7 @@ import socket
 from prompt import ActivationPrompt
 from prompt import FlipperPrompt
 from activation import Activation
+from tableview import TableWindow
 from loading import Loading
 from waiting import Waiting
 from flip_result import FlipResult
@@ -28,7 +29,7 @@ os.environ["SDL_FBDEV"] = "/dev/fb1"
 MODE = 'activator'
 if len(sys.argv) > 1:
     argument = sys.argv[1]
-    if argument == 'activator' or argument == 'master' or argument == 'slave' or argument == 'test':
+    if argument == 'activator' or argument == 'master' or argument == 'slave' or argument == 'test' or argument == 'tables':
         MODE = argument
     else:
         raise Exception("Unknown argument to the program")
@@ -169,6 +170,11 @@ def slave_tag_callback(tag):
         time.sleep(4)
         flipStatus.finish()
 
+def table_tag_callback(tag):
+    if display_manager.active_window() != prompt:
+        return
+    display_manager.launch(TableWindow(namemap[tag], tablemap[tag]))
+
 HOST='0.0.0.0'
 PORT=2217
 if MODE == 'activator':
@@ -212,6 +218,16 @@ elif MODE == 'slave':
     print "Connected to master at " + masterip
     print "Sending master slave time-stamp"
     ss.send(str(time.time()))
+
+elif MODE == 'tables':
+    namemap = {}
+    tablemap = {}
+    import csv
+    datafile = open("table_data.csv", "w")
+    for row in csv.reader(datafile):
+        namemap[row[2]] = row[0] + " " + row[1]
+        tablemap[row[2]] = row[3]
+    add_rfid_callback(table_tag_callback)
 
 elif MODE == 'test':
     add_rfid_callback(print_tag_callback)

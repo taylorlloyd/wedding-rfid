@@ -223,7 +223,7 @@ elif MODE == 'tables':
     namemap = {}
     tablemap = {}
     import csv
-    datafile = open("table_data.csv", "w")
+    datafile = open("table_data.csv", "r")
     for row in csv.reader(datafile):
         namemap[row[2]] = row[0] + " " + row[1]
         tablemap[row[2]] = row[3]

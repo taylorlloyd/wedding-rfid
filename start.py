@@ -8,7 +8,7 @@ import urllib2
 import json
 import sys
 import socket
-from prompt import ActivationPrompt
+from prompt import ActivationPrompt, TablePrompt
 from prompt import FlipperPrompt
 from activation import Activation
 from tableview import TableWindow
@@ -276,7 +276,12 @@ pygame.display.flip()
 # Hide the cursor
 pygame.mouse.set_visible(0)
 
-prompt = ActivationPrompt() if MODE == 'activator' else FlipperPrompt()
+if MODE == 'activator':
+    prompt = ActivationPrompt()
+elif MODE == 'tables':
+    prompt = TablePrompt()
+else:
+    prompt = FlipperPrompt()
 
 print("Starting display manager")
 display_manager = DisplayManager(screen, prompt)
